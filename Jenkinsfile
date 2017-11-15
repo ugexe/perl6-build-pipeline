@@ -9,11 +9,11 @@ pipeline {
                             bat 'mkdir install'
 
                             dir('MoarVM') {
-                                git url: 'https://github.com/MoarVM/MoarVM.git --prefix="%WORKSPACE%/install"'
+                                git url: 'https://github.com/MoarVM/MoarVM.git'
                                 bat '''
                                     call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\Common7\\Tools\\VsMSBuildCmd.bat"
                                     call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"
-                                    call perl Configure.pl
+                                    call perl Configure.pl --prefix="%WORKSPACE%/install"
                                     nmake
                                     nmake install
                                 '''
