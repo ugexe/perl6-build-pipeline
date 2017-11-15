@@ -10,29 +10,35 @@ pipeline {
 
                             dir('MoarVM') {
                                 git url: 'https://github.com/MoarVM/MoarVM.git --prefix="%WORKSPACE%/install"'
-                                bat 'call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\Common7\\Tools\\VsMSBuildCmd.bat"
+                                bat '''
+                                    call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\Common7\\Tools\\VsMSBuildCmd.bat"
                                     call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"
                                     call perl Configure.pl
                                     nmake
-                                    nmake install'
+                                    nmake install
+                                '''
                             }
                             dir('nqp') {
                                 git url: 'https://github.com/perl6/nqp.git'
-                                bat 'call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\Common7\\Tools\\VsMSBuildCmd.bat"
+                                bat '''
+                                    call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\Common7\\Tools\\VsMSBuildCmd.bat"
                                     call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"
                                     call perl Configure.pl --prefix="%WORKSPACE%/install"
                                     call nmake
                                     call nmake test
-                                    call nmake install'
+                                    call nmake install
+                                '''
                             }
                             dir('rakudo') {
                                 git url: 'https://github.com/rakudo/rakudo.git'
-                                bat 'call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\Common7\\Tools\\VsMSBuildCmd.bat"
+                                bat '''
+                                    call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\Common7\\Tools\\VsMSBuildCmd.bat"
                                     call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"
                                     call perl Configure.pl --prefix="%WORKSPACE%/install"
                                     call nmake
                                     call nmake test
-                                    call nmake install'
+                                    call nmake install
+                                '''
                             }
                         }
                     },
