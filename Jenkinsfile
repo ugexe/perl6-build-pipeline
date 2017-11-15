@@ -6,9 +6,9 @@ pipeline {
                 parallel (
                     "windows" : {
                         node('windows') {
-                            git url: 'git@github.com:rakudo/rakudo.git'
-                            git url: 'git@github.com:perl6/nqp.git'
-                            git url: 'git@github.com:MoarVM/MoarVM.git'
+                            git url: 'https://github.com/rakudo/rakudo.git'
+                            git url: 'https://github.com/perl6/nqp.git'
+                            git url: 'https://github.com/MoarVM/MoarVM.git'
 
                             bat 'call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"'
 
@@ -20,20 +20,22 @@ pipeline {
                             dir('nqp') {
                                 bat 'call perl Configure.pl --prefix="%WORKSPACE%/MoarVM/install"'
                                 bat 'call nmake'
+                                bat 'call nmake test'
                                 bat 'call nmake install'
                             }
                             dir('rakudo') {
                                 bat 'call perl Configure.pl --prefix="%WORKSPACE%/nqp/install"'
                                 bat 'call nmake'
+                                bat 'call nmake test'
                                 bat 'call nmake install'
                             }
                         }
                     },
                     "linux" : {
                         node('linux') {
-                            git url: 'git@github.com:rakudo/rakudo.git'
-                            git url: 'git@github.com:perl6/nqp.git'
-                            git url: 'git@github.com:MoarVM/MoarVM.git'
+                            git url: 'https://github.com/rakudo/rakudo.git'
+                            git url: 'https://github.com/perl6/nqp.git'
+                            git url: 'https://github.com/MoarVM/MoarVM.git'
 
                             dir('MoarVM') {
                                 sh 'perl Configure.pl'
@@ -43,11 +45,13 @@ pipeline {
                             dir('nqp') {
                                 sh 'perl Configure.pl --prefix="$WORKSPACE/MoarVM/install"'
                                 sh 'make'
+                                sh 'make test'
                                 sh 'make install'
                             }
                             dir('rakudo') {
                                 sh 'perl Configure.pl --prefix="$WORKSPACE/nqp/install"'
                                 sh 'make'
+                                sh 'make test'
                                 sh 'make install'
                             }
                         }
