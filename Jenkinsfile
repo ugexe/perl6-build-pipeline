@@ -1,5 +1,9 @@
 pipeline {
     agent none
+    options {
+        timestamps()
+        timeout(time: 60, unit: 'MINUTES')
+    }
     stages {
         stage("distribute") {
             steps {
@@ -9,16 +13,13 @@ pipeline {
                             dir('MoarVM') {
                                 git url: 'https://github.com/MoarVM/MoarVM.git'
                                 bat '''
-                                    call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\Common7\\Tools\\VsMSBuildCmd.bat"
                                     call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"
                                     perl Configure.pl --prefix="%WORKSPACE%/install"
                                 bat '''
-                                    call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\Common7\\Tools\\VsMSBuildCmd.bat"
                                     call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"
                                     nmake
                                 '''
                                 bat '''
-                                    call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\Common7\\Tools\\VsMSBuildCmd.bat"
                                     call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"
                                     nmake install
                                 '''
