@@ -40,24 +40,24 @@ pipeline {
                             }
 
                             dir('MoarVM') {
-                                bat 'call perl Configure.pl'
-                                bat 'call make'
-                                bat 'call make install'
+                                sh 'perl Configure.pl'
+                                sh 'make'
+                                sh 'make install'
                             }
                             dir('nqp') {
-                                bat 'call perl Configure.pl --prefix="$WORKSPACE/MoarVM/install"'
-                                bat 'call make'
-                                bat 'call make install'
+                                sh 'perl Configure.pl --prefix="$WORKSPACE/MoarVM/install"'
+                                sh 'make'
+                                sh 'make install'
                             }
                             dir('rakudo') {
-                                bat 'call perl Configure.pl --prefix="$WORKSPACE/nqp/install"'
-                                bat 'call make'
-                                bat 'call make install'
+                                sh 'perl Configure.pl --prefix="$WORKSPACE/nqp/install"'
+                                sh 'make'
+                                sh 'make install'
                             }
                         }
                     }
                 }                
-            )
+            }
         }
     }    
 }
