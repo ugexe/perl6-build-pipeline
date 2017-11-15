@@ -10,24 +10,25 @@ pipeline {
                             git url: 'https://github.com/perl6/nqp.git'
                             git url: 'https://github.com/MoarVM/MoarVM.git'
 
-                            bat 'call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"'
-
+                            bat '"C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"'
+                            bat 'dir'
                             dir('MoarVM') {
-                                bat 'call perl Configure.pl'
-                                bat 'call nmake'
-                                bat 'call nmake install'
+                                bat 'dir'
+                                bat 'perl Configure.pl'
+                                bat 'nmake'
+                                bat 'nmake install'
                             }
                             dir('nqp') {
-                                bat 'call perl Configure.pl --prefix="%WORKSPACE%/MoarVM/install"'
-                                bat 'call nmake'
-                                bat 'call nmake test'
-                                bat 'call nmake install'
+                                bat 'perl Configure.pl --prefix="%WORKSPACE%/MoarVM/install"'
+                                bat 'nmake'
+                                bat 'nmake test'
+                                bat 'nmake install'
                             }
                             dir('rakudo') {
-                                bat 'call perl Configure.pl --prefix="%WORKSPACE%/nqp/install"'
-                                bat 'call nmake'
-                                bat 'call nmake test'
-                                bat 'call nmake install'
+                                bat 'perl Configure.pl --prefix="%WORKSPACE%/nqp/install"'
+                                bat 'nmake'
+                                bat 'nmake test'
+                                bat 'nmake install'
                             }
                         }
                     },
@@ -37,7 +38,10 @@ pipeline {
                             git url: 'https://github.com/perl6/nqp.git'
                             git url: 'https://github.com/MoarVM/MoarVM.git'
 
+                            sh 'dir'
+
                             dir('MoarVM') {
+                                sh 'dir'
                                 sh 'perl Configure.pl'
                                 sh 'make'
                                 sh 'make install'
