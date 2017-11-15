@@ -6,11 +6,9 @@ pipeline {
                 parallel (
                     "windows" : {
                         node('windows') {
-                            stage('Clone sources') {
-                                git url: 'git@github.com:rakudo/rakudo.git'
-                                git url: 'git@github.com:perl6/nqp.git'
-                                git url: 'git@github.com:MoarVM/MoarVM.git'
-                            }
+                            git url: 'git@github.com:rakudo/rakudo.git'
+                            git url: 'git@github.com:perl6/nqp.git'
+                            git url: 'git@github.com:MoarVM/MoarVM.git'
 
                             bat 'call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"'
 
@@ -33,11 +31,9 @@ pipeline {
                     },
                     "linux" : {
                         node('linux') {
-                            stage('Clone sources') {
-                                git url: 'git@github.com:rakudo/rakudo.git'
-                                git url: 'git@github.com:perl6/nqp.git'
-                                git url: 'git@github.com:MoarVM/MoarVM.git'
-                            }
+                            git url: 'git@github.com:rakudo/rakudo.git'
+                            git url: 'git@github.com:perl6/nqp.git'
+                            git url: 'git@github.com:MoarVM/MoarVM.git'
 
                             dir('MoarVM') {
                                 sh 'perl Configure.pl'
