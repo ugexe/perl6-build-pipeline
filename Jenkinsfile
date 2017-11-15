@@ -15,6 +15,7 @@ pipeline {
                                 bat '''
                                     call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"
                                     perl Configure.pl --prefix="%WORKSPACE%/install"
+                                '''
                                 bat '''
                                     call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"
                                     nmake
