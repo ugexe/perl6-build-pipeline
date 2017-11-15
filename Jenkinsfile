@@ -23,7 +23,7 @@ pipeline {
                                 bat '''
                                     call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\Common7\\Tools\\VsMSBuildCmd.bat"
                                     call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"
-                                    call perl Configure.pl --prefix="%WORKSPACE%/install"
+                                    call perl Configure.pl --prefix="%WORKSPACE%/install" --with-moar="%WORKSPACE%/install/bin/moar"
                                     call nmake
                                     call nmake test
                                     call nmake install
@@ -54,7 +54,7 @@ pipeline {
                             }
                             dir('nqp') {
                                 git url: 'https://github.com/perl6/nqp.git'
-                                sh 'perl Configure.pl --prefix="$WORKSPACE/install" --with-moar="$WORKSPACE/install"'
+                                sh 'perl Configure.pl --prefix="$WORKSPACE/install" --with-moar="$WORKSPACE/install/bin/moar"'
                                 sh 'make'
                                 sh 'make test'
                                 sh 'make install'
