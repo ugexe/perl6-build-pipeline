@@ -6,46 +6,65 @@ pipeline {
                 parallel (
                     "windows" : {
                         node('windows') {
-                            bat 'mkdir install'
-
                             dir('MoarVM') {
                                 git url: 'https://github.com/MoarVM/MoarVM.git'
                                 bat '''
                                     call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\Common7\\Tools\\VsMSBuildCmd.bat"
                                     call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"
-                                    call perl Configure.pl --prefix="%WORKSPACE%/install"
+                                    perl Configure.pl --prefix="%WORKSPACE%/install"
+                                bat '''
+                                    call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\Common7\\Tools\\VsMSBuildCmd.bat"
+                                    call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"
                                     nmake
+                                '''
+                                bat '''
+                                    call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\Common7\\Tools\\VsMSBuildCmd.bat"
+                                    call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"
                                     nmake install
                                 '''
                             }
                             dir('nqp') {
                                 git url: 'https://github.com/perl6/nqp.git'
                                 bat '''
-                                    call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\Common7\\Tools\\VsMSBuildCmd.bat"
                                     call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"
                                     call perl Configure.pl --prefix="%WORKSPACE%/install" --with-moar="%WORKSPACE%/install/bin/moar"
-                                    call nmake
-                                    call nmake test
-                                    call nmake install
+                                '''
+                                bat '''
+                                    call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"
+                                    nmake
+                                '''
+                                bat '''
+                                    call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"
+                                    nmake test
+                                '''
+                                bat '''
+                                    call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"
+                                    nmake install
                                 '''
                             }
                             dir('rakudo') {
                                 git url: 'https://github.com/rakudo/rakudo.git'
                                 bat '''
-                                    call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\Common7\\Tools\\VsMSBuildCmd.bat"
                                     call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"
-                                    call perl Configure.pl --prefix="%WORKSPACE%/install"
-                                    call nmake
-                                    call nmake test
-                                    call nmake install
+                                    perl Configure.pl --prefix="%WORKSPACE%/install"
+                                '''
+                                bat '''
+                                    call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"
+                                    nmake
+                                '''
+                                bat '''
+                                    call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"
+                                    nmake test
+                                '''
+                                bat '''
+                                    call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"
+                                    nmake install
                                 '''
                             }
                         }
                     },
                     "linux" : {
                         node('linux') {
-                            sh 'mkdir install'
-
                             dir('MoarVM') {
                                 git url: 'https://github.com/MoarVM/MoarVM.git'
                                 sh 'perl Configure.pl --prefix="$WORKSPACE/install"'
