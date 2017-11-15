@@ -6,53 +6,47 @@ pipeline {
                 parallel (
                     "windows" : {
                         node('windows') {
-                            git url: 'https://github.com/rakudo/rakudo.git'
-                            git url: 'https://github.com/perl6/nqp.git'
-                            git url: 'https://github.com/MoarVM/MoarVM.git'
+                            bat 'call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"'
 
-                            bat '"C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"'
-                            bat 'dir'
                             dir('MoarVM') {
-                                bat 'dir'
-                                bat 'perl Configure.pl'
-                                bat 'nmake'
-                                bat 'nmake install'
+                                git url: 'https://github.com/MoarVM/MoarVM.git'
+                                bat 'call perl Configure.pl'
+                                bat 'call nmake'
+                                bat 'call nmake install'
                             }
                             dir('nqp') {
-                                bat 'perl Configure.pl --prefix="%WORKSPACE%/MoarVM/install"'
-                                bat 'nmake'
-                                bat 'nmake test'
-                                bat 'nmake install'
+                                git url: 'https://github.com/perl6/nqp.git'
+                                bat 'call perl Configure.pl --prefix="%WORKSPACE%/MoarVM/install"'
+                                bat 'call nmake'
+                                bat 'call nmake test'
+                                bat 'call nmake install'
                             }
                             dir('rakudo') {
-                                bat 'perl Configure.pl --prefix="%WORKSPACE%/nqp/install"'
-                                bat 'nmake'
-                                bat 'nmake test'
-                                bat 'nmake install'
+                                git url: 'https://github.com/rakudo/rakudo.git'
+                                bat 'call perl Configure.pl --prefix="%WORKSPACE%/nqp/install"'
+                                bat 'call nmake'
+                                bat 'call nmake test'
+                                bat 'call nmake install'
                             }
                         }
                     },
                     "linux" : {
                         node('linux') {
-                            git url: 'https://github.com/rakudo/rakudo.git'
-                            git url: 'https://github.com/perl6/nqp.git'
-                            git url: 'https://github.com/MoarVM/MoarVM.git'
-
-                            sh 'dir'
-
                             dir('MoarVM') {
-                                sh 'dir'
+                                git url: 'https://github.com/MoarVM/MoarVM.git'
                                 sh 'perl Configure.pl'
                                 sh 'make'
                                 sh 'make install'
                             }
                             dir('nqp') {
+                                git url: 'https://github.com/perl6/nqp.git'
                                 sh 'perl Configure.pl --prefix="$WORKSPACE/MoarVM/install"'
                                 sh 'make'
                                 sh 'make test'
                                 sh 'make install'
                             }
                             dir('rakudo') {
+                                git url: 'https://github.com/rakudo/rakudo.git'
                                 sh 'perl Configure.pl --prefix="$WORKSPACE/nqp/install"'
                                 sh 'make'
                                 sh 'make test'
