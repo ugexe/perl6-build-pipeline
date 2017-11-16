@@ -15,7 +15,7 @@ pipeline {
                                     step([$class: "TapPublisher", testResults: "report/**/*", failIfNoResults: true, outputTapToConsole: true, showOnlyFailures: true, skipIfBuildNotOk: false, todoIsFailure: false, verbose: true])
                                 }
                             }
-                            def shell = { String command ->
+                            def foo = { String command ->
                                 if (isUnix()) {
                                     return sh(returnStdout: true, script: """
                                         sh \"${command}"
@@ -75,7 +75,7 @@ pipeline {
                                     step([$class: "TapPublisher", testResults: "report/**/*", failIfNoResults: true, outputTapToConsole: true, showOnlyFailures: true, skipIfBuildNotOk: false, todoIsFailure: false, verbose: true])
                                 }
                             }
-                            def shell = { String command ->
+                            def foo = { String command ->
                                 if (isUnix()) {
                                     return sh(returnStdout: true, script: """
                                         sh \"${command}"
