@@ -10,8 +10,9 @@ pipeline {
                 parallel (
                     "windows" : {
                         node('windows') {
-                            bat 'mkdir %WORKSPACE%/report/nqp'
-                            bat 'mkdir %WORKSPACE%/report/rakudo'
+                            bat 'mkdir "%WORKSPACE%\\report\\nqp"'
+                            bat 'mkdir "%WORKSPACE%\\report\\rakudo"'
+                            bat 'cpanm -q -n TAP::Harness::Archive'
 
                             dir('MoarVM') {
                                 git url: 'https://github.com/MoarVM/MoarVM.git'
@@ -72,6 +73,7 @@ pipeline {
                         node('linux') {
                             sh 'mkdir -p $WORKSPACE/report/nqp'
                             sh 'mkdir -p $WORKSPACE/report/rakudo'
+                            bat 'cpanm --sudo -q -n TAP::Harness::Archive'
 
                             dir('MoarVM') {
                                 git url: 'https://github.com/MoarVM/MoarVM.git'
@@ -98,5 +100,10 @@ pipeline {
                 )
             }
         }
-    }    
+    }
+    post {
+        always {
+            step([$class: "TapPublisher", testResults: "$WORKSPACE/report/**/*.t"])
+        }
+    }
 }
