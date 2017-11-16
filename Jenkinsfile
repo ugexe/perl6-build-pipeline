@@ -8,12 +8,12 @@ pipeline {
         if (isUnix()) {
             return (returnStdout: true, script: """
                 sh \"${command}"
-            """
+            """)
         } else {
             return powershell(returnStdout: true, script: """
                 call \"C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat\"
                 Invoke-Expression \"${command}\"
-            """
+            """)
         }
     }
     stages {
