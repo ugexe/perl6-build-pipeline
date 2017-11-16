@@ -90,7 +90,7 @@ pipeline {
                                 git url: 'https://github.com/rakudo/rakudo.git'
                                 sh 'perl Configure.pl --prefix="$WORKSPACE/install"'
                                 sh 'make'
-                                sh 'prove --archive "$WORKSPACE/report" --timer -v -r t/''
+                                sh 'prove --archive "$WORKSPACE/report" --timer -v -r t/'
                                 sh 'make install'
                             }
                         }
