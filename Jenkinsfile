@@ -8,6 +8,34 @@ pipeline {
         stage("distribute") {
             steps {
                 parallel (
+                    "linux" : {
+                        node('linux') {
+                            sh 'mkdir -p $WORKSPACE/report/nqp'
+                            sh 'mkdir -p $WORKSPACE/report/rakudo'
+                            sh 'cpanm --sudo -q -n TAP::Harness::Archive'
+
+                            dir('MoarVM') {
+                                git url: 'https://github.com/MoarVM/MoarVM.git'
+                                sh 'perl Configure.pl --prefix="$WORKSPACE/install"'
+                                sh 'make'
+                                sh 'make install'
+                            }
+                            dir('nqp') {
+                                git url: 'https://github.com/perl6/nqp.git'
+                                sh 'perl Configure.pl --prefix="$WORKSPACE/install" --with-moar="$WORKSPACE/install/bin/moar"'
+                                sh 'make'
+                                sh 'prove --archive "$WORKSPACE/report/nqp" --timer -v -r t/'
+                                sh 'make install'
+                            }
+                            dir('rakudo') {
+                                git url: 'https://github.com/rakudo/rakudo.git'
+                                sh 'perl Configure.pl --prefix="$WORKSPACE/install"'
+                                sh 'make'
+                                sh 'prove --archive "$WORKSPACE/report" --timer -v -r t/'
+                                sh 'make install'
+                            }
+                        }
+                    },
                     "windows" : {
                         node('windows') {
                             bat 'mkdir "%WORKSPACE%\\report\\nqp"'
@@ -68,34 +96,6 @@ pipeline {
                                 '''
                             }
                         }
-                    },
-                    "linux" : {
-                        node('linux') {
-                            sh 'mkdir -p $WORKSPACE/report/nqp'
-                            sh 'mkdir -p $WORKSPACE/report/rakudo'
-                            bat 'cpanm --sudo -q -n TAP::Harness::Archive'
-
-                            dir('MoarVM') {
-                                git url: 'https://github.com/MoarVM/MoarVM.git'
-                                sh 'perl Configure.pl --prefix="$WORKSPACE/install"'
-                                sh 'make'
-                                sh 'make install'
-                            }
-                            dir('nqp') {
-                                git url: 'https://github.com/perl6/nqp.git'
-                                sh 'perl Configure.pl --prefix="$WORKSPACE/install" --with-moar="$WORKSPACE/install/bin/moar"'
-                                sh 'make'
-                                sh 'prove --archive "$WORKSPACE/report/nqp" --timer -v -r t/'
-                                sh 'make install'
-                            }
-                            dir('rakudo') {
-                                git url: 'https://github.com/rakudo/rakudo.git'
-                                sh 'perl Configure.pl --prefix="$WORKSPACE/install"'
-                                sh 'make'
-                                sh 'prove --archive "$WORKSPACE/report" --timer -v -r t/'
-                                sh 'make install'
-                            }
-                        }
                     }
                 )
             }
@@ -103,7 +103,7 @@ pipeline {
     }
     post {
         always {
-            step([$class: "TapPublisher", testResults: "$WORKSPACE/report/**/*.t"])
+            step([$class: "TapPublisher", testResults: "$WORKSPACE/report/**/*.t", failIfNoResults: true, outputTapToConsole: true, showOnlyFailures: true, skipIfBuildNotOk: true])
         }
     }
 }
