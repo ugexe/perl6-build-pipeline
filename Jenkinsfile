@@ -15,18 +15,6 @@ pipeline {
                                     step([$class: "TapPublisher", testResults: "report/**/*", failIfNoResults: true, outputTapToConsole: true, showOnlyFailures: true, skipIfBuildNotOk: false, todoIsFailure: false, verbose: true])
                                 }
                             }
-                            def shell(command) {
-                                if (isUnix()) {
-                                    return sh(returnStdout: true, script: """
-                                        sh \"${command}"
-                                    """)
-                                } else {
-                                    return powershell(returnStdout: true, script: """
-                                        call \"C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat\"
-                                        Invoke-Expression \"${command}\"
-                                    """)
-                                }
-                            }
 
                             shell 'mkdir -p $WORKSPACE/report/nqp'
                             shell 'mkdir -p $WORKSPACE/report/rakudo'
@@ -76,19 +64,6 @@ pipeline {
                                 }
                             }
 
-                            def shell(command) {
-                                if (isUnix()) {
-                                    return sh(returnStdout: true, script: """
-                                        sh \"${command}"
-                                    """)
-                                } else {
-                                    return powershell(returnStdout: true, script: """
-                                        call \"C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat\"
-                                        Invoke-Expression \"${command}\"
-                                    """)
-                                }
-                            }
-
                             shell 'mkdir "%WORKSPACE%\\report\\nqp"'
                             shell 'mkdir "%WORKSPACE%\\report\\rakudo"'
                             shell "mkdir \"$WORKSPACE\\report\\spectest\""
@@ -132,5 +107,18 @@ pipeline {
                 )
             }
         }
+    }
+}
+
+def shell(command) {
+    if (isUnix()) {
+        return sh(returnStdout: true, script: """
+            sh \"${command}"
+        """)
+    } else {
+        return powershell(returnStdout: true, script: """
+            call \"C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat\"
+            Invoke-Expression \"${command}\"
+        """)
     }
 }
