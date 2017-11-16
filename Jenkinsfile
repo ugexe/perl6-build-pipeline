@@ -4,7 +4,7 @@ pipeline {
         timestamps()
         timeout(time: 30, unit: 'MINUTES')
     }
-    def shell(command) {
+    def shell = { String command ->
         if (isUnix()) {
             return sh(returnStdout: true, script: """
                 sh \"${command}"
