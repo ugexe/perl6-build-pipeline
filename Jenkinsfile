@@ -24,14 +24,14 @@ pipeline {
                                 git url: 'https://github.com/perl6/nqp.git'
                                 sh 'perl Configure.pl --prefix="$WORKSPACE/install" --with-moar="$WORKSPACE/install/bin/moar"'
                                 sh 'make'
-                                sh 'prove --archive "$WORKSPACE/report/nqp" --timer -j6 -v -r -e "$WORKSPACE/install/bin/nqp-m" t/nqp t/hll t/qregex t/p5regex t/qast t/moar t/serialization t/nativecall'
+                                sh 'prove --archive "$WORKSPACE/report/nqp" --timer -j6 -v -r -e "./nqp-m" t/nqp t/hll t/qregex t/p5regex t/qast t/moar t/serialization t/nativecall'
                                 sh 'make install'
                             }
                             dir('rakudo') {
                                 git url: 'https://github.com/rakudo/rakudo.git'
                                 sh 'perl Configure.pl --prefix="$WORKSPACE/install"'
                                 sh 'make'
-                                sh 'prove --archive "$WORKSPACE/report/rakudo" --timer -j6 -v -r -e "$WORKSPACE/install/bin/perl6-m" t/'
+                                sh 'prove --archive "$WORKSPACE/report/rakudo" --timer -j6 -v -r -e "./perl6-m" t/'
                                 sh 'make install'
                             }
                         }
@@ -69,7 +69,7 @@ pipeline {
                                 '''
                                 bat '''
                                     call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"
-                                    prove --archive "%WORKSPACE%/report/nqp" --timer -j6 -v -r -e "%WORKSPACE%\\install\\bin\\nqp-m.bat" t/nqp t/hll t/qregex t/p5regex t/qast t/moar t/serialization t/nativecall
+                                    prove --archive "%WORKSPACE%/report/nqp" --timer -j6 -v -r -e ".\\nqp-m.bat" t/nqp t/hll t/qregex t/p5regex t/qast t/moar t/serialization t/nativecall
                                 '''
                                 bat '''
                                     call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"
@@ -88,7 +88,7 @@ pipeline {
                                 '''
                                 bat '''
                                     call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"
-                                    prove --archive "%WORKSPACE%/report/rakudo" --timer -j6 -v -r -e "%WORKSPACE%\\install\\bin\\perl6-m.bat" t/
+                                    prove --archive "%WORKSPACE%/report/rakudo" --timer -j6 -v -r -e ".\\perl6-m.bat" t/
                                 '''
                                 bat '''
                                     call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"
