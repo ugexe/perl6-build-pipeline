@@ -6,7 +6,7 @@ pipeline {
     }
     def shell(command) {
         if (isUnix()) {
-            return (returnStdout: true, script: """
+            return sh(returnStdout: true, script: """
                 sh \"${command}"
             """)
         } else {
