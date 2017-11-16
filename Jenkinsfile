@@ -27,7 +27,7 @@ pipeline {
 
                                 sh 'perl Configure.pl --prefix="$WORKSPACE/install" --with-moar="$WORKSPACE/install/bin/moar"'
                                 sh 'make'
-                                writeFile file: ".proverc", text: "--archive "$WORKSPACE/report/rakudo\"\n--timer"
+                                writeFile file: ".proverc", text: "--archive \"$WORKSPACE/report/rakudo\"\n--timer"
                                 sh 'make test'
                                 sh 'make install'
                             }
@@ -36,9 +36,9 @@ pipeline {
 
                                 sh 'perl Configure.pl --prefix="$WORKSPACE/install"'
                                 sh 'make'
-                                writeFile file: ".proverc", text: "--archive "$WORKSPACE/report/rakudo\"\n--timer"
+                                writeFile file: ".proverc", text: "--archive \"$WORKSPACE/report/rakudo\"\n--timer"
                                 sh 'make test'
-                                writeFile file: ".proverc", text: "--archive "$WORKSPACE/report/spectest\"\n--timer"
+                                writeFile file: ".proverc", text: "--archive \"$WORKSPACE/report/spectest\"\n--timer"
                                 sh 'make spectest'
                                 sh 'make install'
                             }
@@ -77,7 +77,7 @@ pipeline {
                                     call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"
                                     nmake
                                 '''
-                                writeFile file: "_proverc", text: "--archive "$WORKSPACE/repor/nqp\"\n--timer"
+                                writeFile file: "_proverc", text: "--archive \"$WORKSPACE/repor/nqp\"\n--timer"
                                 bat '''
                                     call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"
                                     nmake test
@@ -98,12 +98,12 @@ pipeline {
                                     call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"
                                     nmake
                                 '''
-                                writeFile file: "_proverc", text: "--archive "$WORKSPACE/report/rakudo\"\n--timer"
+                                writeFile file: "_proverc", text: "--archive \"$WORKSPACE/report/rakudo\"\n--timer"
                                 bat '''
                                     call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"
                                     nmake test
                                 '''
-                                writeFile file: "_proverc", text: "--archive "$WORKSPACE/report/spectest\"\n--timer"
+                                writeFile file: "_proverc", text: "--archive \"$WORKSPACE/report/spectest\"\n--timer"
                                 bat '''
                                     call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"
                                     nmake spectest
