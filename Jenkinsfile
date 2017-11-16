@@ -2,7 +2,7 @@ pipeline {
     agent none
     options {
         timestamps()
-        timeout(time: 20, unit: 'MINUTES')
+        timeout(time: 30, unit: 'MINUTES')
     }
     stages {
         stage("distribute") {
