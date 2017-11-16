@@ -121,7 +121,7 @@ pipeline {
     }
     post {
         always {
-            step([$class: "TapPublisher", testResults: "$WORKSPACE/report/**/*.t", failIfNoResults: true, outputTapToConsole: true, showOnlyFailures: true, skipIfBuildNotOk: true])
+            step([$class: "TapPublisher", testResults: "report/**/*", failIfNoResults: true, outputTapToConsole: true, showOnlyFailures: true, skipIfBuildNotOk: true, todoIsFailure: false, verbose: true])
         }
     }
 }
