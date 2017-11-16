@@ -83,14 +83,14 @@ pipeline {
                                 git url: 'https://github.com/perl6/nqp.git'
                                 sh 'perl Configure.pl --prefix="$WORKSPACE/install" --with-moar="$WORKSPACE/install/bin/moar"'
                                 sh 'make'
-                                sh 'prove --archive "%WORKSPACE%/report/nqp" --timer -v -r t/''
+                                sh 'prove --archive "$WORKSPACE/report/nqp" --timer -v -r t/''
                                 sh 'make install'
                             }
                             dir('rakudo') {
                                 git url: 'https://github.com/rakudo/rakudo.git'
                                 sh 'perl Configure.pl --prefix="$WORKSPACE/install"'
                                 sh 'make'
-                                sh 'prove --archive "%WORKSPACE%/report" --timer -v -r t/''
+                                sh 'prove --archive "$WORKSPACE/report" --timer -v -r t/''
                                 sh 'make install'
                             }
                         }
