@@ -4,18 +4,6 @@ pipeline {
         timestamps()
         timeout(time: 30, unit: 'MINUTES')
     }
-    def shell = { String command ->
-        if (isUnix()) {
-            return sh(returnStdout: true, script: """
-                sh \"${command}"
-            """)
-        } else {
-            return powershell(returnStdout: true, script: """
-                call \"C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat\"
-                Invoke-Expression \"${command}\"
-            """)
-        }
-    }
     stages {
         stage("distribute") {
             steps {
@@ -25,6 +13,18 @@ pipeline {
                             post {
                                 always {
                                     step([$class: "TapPublisher", testResults: "report/**/*", failIfNoResults: true, outputTapToConsole: true, showOnlyFailures: true, skipIfBuildNotOk: false, todoIsFailure: false, verbose: true])
+                                }
+                            }
+                            def shell = { String command ->
+                                if (isUnix()) {
+                                    return sh(returnStdout: true, script: """
+                                        sh \"${command}"
+                                    """)
+                                } else {
+                                    return powershell(returnStdout: true, script: """
+                                        call \"C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat\"
+                                        Invoke-Expression \"${command}\"
+                                    """)
                                 }
                             }
 
@@ -73,6 +73,18 @@ pipeline {
                             post {
                                 always {
                                     step([$class: "TapPublisher", testResults: "report/**/*", failIfNoResults: true, outputTapToConsole: true, showOnlyFailures: true, skipIfBuildNotOk: false, todoIsFailure: false, verbose: true])
+                                }
+                            }
+                            def shell = { String command ->
+                                if (isUnix()) {
+                                    return sh(returnStdout: true, script: """
+                                        sh \"${command}"
+                                    """)
+                                } else {
+                                    return powershell(returnStdout: true, script: """
+                                        call \"C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat\"
+                                        Invoke-Expression \"${command}\"
+                                    """)
                                 }
                             }
 
