@@ -1,3 +1,27 @@
+#!/bin/groovy
+
+def shell(Map params = [:]) {
+    String script = params.script
+    Boolean returnStatus = params.get('returnStatus', false)
+    Boolean returnStdout = params.get('returnStdout', false)
+    String encoding = params.get('encoding', null)
+
+    if (isUnix()) {
+        return steps.sh(script: script,
+                  returnStatus: returnStatus,
+                  returnStdout: returnStdout,
+                      encoding: encoding)
+    } else {
+        return steps.powershell(script: script,
+                  returnStatus: returnStatus,
+                  returnStdout: returnStdout,
+                      encoding: encoding)    
+    }
+}
+def shell(String script) {
+    return shell(script: script)
+}
+
 pipeline {
     agent none
     options {
@@ -107,18 +131,5 @@ pipeline {
                 )
             }
         }
-    }
-}
-
-def shell(command) {
-    if (isUnix()) {
-        return sh(returnStdout: true, script: """
-            sh \"${command}"
-        """)
-    } else {
-        return powershell(returnStdout: true, script: """
-            call \"C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat\"
-            Invoke-Expression \"${command}\"
-        """)
     }
 }
