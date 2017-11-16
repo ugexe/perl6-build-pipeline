@@ -12,26 +12,34 @@ pipeline {
                         node('linux') {
                             sh 'mkdir -p $WORKSPACE/report/nqp'
                             sh 'mkdir -p $WORKSPACE/report/rakudo'
+                            sh 'mkdir -p $WORKSPACE/report/spectest'
                             sh 'cpanm --sudo -q -n TAP::Harness::Archive'
 
                             dir('MoarVM') {
                                 git url: 'https://github.com/MoarVM/MoarVM.git'
+
                                 sh 'perl Configure.pl --prefix="$WORKSPACE/install"'
                                 sh 'make'
                                 sh 'make install'
                             }
                             dir('nqp') {
                                 git url: 'https://github.com/perl6/nqp.git'
+
                                 sh 'perl Configure.pl --prefix="$WORKSPACE/install" --with-moar="$WORKSPACE/install/bin/moar"'
                                 sh 'make'
-                                sh 'prove --archive "$WORKSPACE/report/nqp" --timer -j6 -v -r -e "./nqp-m" t/nqp t/hll t/qregex t/p5regex t/qast t/moar t/serialization t/nativecall'
+                                writeFile file: ".proverc", text: "--archive "$WORKSPACE/report/rakudo\"\n--timer"
+                                sh 'make test'
                                 sh 'make install'
                             }
                             dir('rakudo') {
                                 git url: 'https://github.com/rakudo/rakudo.git'
+
                                 sh 'perl Configure.pl --prefix="$WORKSPACE/install"'
                                 sh 'make'
-                                sh 'prove --archive "$WORKSPACE/report/rakudo" --timer -j6 -v -r -e "./perl6-m" t/'
+                                writeFile file: ".proverc", text: "--archive "$WORKSPACE/report/rakudo\"\n--timer"
+                                sh 'make test'
+                                writeFile file: ".proverc", text: "--archive "$WORKSPACE/report/spectest\"\n--timer"
+                                sh 'make spectest'
                                 sh 'make install'
                             }
                         }
@@ -40,6 +48,7 @@ pipeline {
                         node('windows') {
                             bat 'mkdir "%WORKSPACE%\\report\\nqp"'
                             bat 'mkdir "%WORKSPACE%\\report\\rakudo"'
+                            bat 'mkdir "%WORKSPACE%\\report\\spectest"'
                             bat 'cpanm -q -n TAP::Harness::Archive'
 
                             dir('MoarVM') {
@@ -59,6 +68,7 @@ pipeline {
                             }
                             dir('nqp') {
                                 git url: 'https://github.com/perl6/nqp.git'
+
                                 bat '''
                                     call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"
                                     perl Configure.pl --prefix="%WORKSPACE%/install" --with-moar="%WORKSPACE%/install/bin/moar"
@@ -67,9 +77,10 @@ pipeline {
                                     call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"
                                     nmake
                                 '''
+                                writeFile file: "_proverc", text: "--archive "$WORKSPACE/repor/nqp\"\n--timer"
                                 bat '''
                                     call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"
-                                    prove --archive "%WORKSPACE%/report/nqp" --timer -j6 -v -r -e ".\\nqp-m.bat" t/nqp t/hll t/qregex t/p5regex t/qast t/moar t/serialization t/nativecall
+                                    nmake test
                                 '''
                                 bat '''
                                     call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"
@@ -78,6 +89,7 @@ pipeline {
                             }
                             dir('rakudo') {
                                 git url: 'https://github.com/rakudo/rakudo.git'
+
                                 bat '''
                                     call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"
                                     perl Configure.pl --prefix="%WORKSPACE%/install"
@@ -86,9 +98,15 @@ pipeline {
                                     call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"
                                     nmake
                                 '''
+                                writeFile file: "_proverc", text: "--archive "$WORKSPACE/report/rakudo\"\n--timer"
                                 bat '''
                                     call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"
-                                    prove --archive "%WORKSPACE%/report/rakudo" --timer -j6 -v -r -e ".\\perl6-m.bat" t/
+                                    nmake test
+                                '''
+                                writeFile file: "_proverc", text: "--archive "$WORKSPACE/report/spectest\"\n--timer"
+                                bat '''
+                                    call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"
+                                    nmake spectest
                                 '''
                                 bat '''
                                     call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"
