@@ -13,7 +13,7 @@ pipeline {
                     }
                     post {
                         always {
-                            sh 'printenv'
+                            sh 'dir'
                             junit "report/**/*.xml"
                         }
                     }
@@ -36,8 +36,9 @@ pipeline {
                             sh 'perl Configure.pl --prefix="$WORKSPACE/install" --with-moar="$WORKSPACE/install/bin/moar"'
                             sh 'make'
 
-                            withEnv(['PERL_TEST_HARNESS_DUMP_TAP=\"$WORKSPACE/report/nqp\"', 'ALLOW_PASSING_TODOS=1']) {
-                                sh 'printenv'
+                            withEnv(['PERL_TEST_HARNESS_DUMP_TAP=report/nqp', 'ALLOW_PASSING_TODOS=1']) {
+                                sh 'dir'
+                                sh 'echo $ALLOW_PASSING_TODOS'
                                 writeFile file: ".proverc", text: "--formatter TAP::Formatter::JUnitREGRU\n--timer"
                                 sh 'make test'
                             }
