@@ -10,14 +10,6 @@ pipeline {
                 parallel (
                     "linux" : {
                         node('linux') {
-                            post {
-                                always {
-                                    script {
-                                        step([$class: "TapPublisher", testResults: "report/**/*", failIfNoResults: true, outputTapToConsole: true, showOnlyFailures: true, skipIfBuildNotOk: false, todoIsFailure: false, verbose: true])
-                                    }
-                                }
-                            }
-
                             sh 'mkdir -p $WORKSPACE/report/nqp'
                             sh 'mkdir -p $WORKSPACE/report/rakudo'
                             sh 'mkdir -p $WORKSPACE/report/spectest'
@@ -39,6 +31,7 @@ pipeline {
 
                                 writeFile file: ".proverc", text: "--archive \"$WORKSPACE/report/nqp\"\n--timer"
                                 sh 'make test'
+                                step([$class: "TapPublisher", testResults: "$WORKSPACE/report/nqp/*", failIfNoResults: true, outputTapToConsole: true, showOnlyFailures: true, skipIfBuildNotOk: false, todoIsFailure: false, verbose: true])
 
                                 sh 'make install'
                             }
@@ -50,6 +43,7 @@ pipeline {
 
                                 writeFile file: ".proverc", text: "--archive \"$WORKSPACE/report/rakudo\"\n--timer"
                                 sh 'make test'
+                                step([$class: "TapPublisher", testResults: "$WORKSPACE/report/rakudo/*", failIfNoResults: true, outputTapToConsole: true, showOnlyFailures: true, skipIfBuildNotOk: false, todoIsFailure: false, verbose: true])
 
                                 writeFile file: ".proverc", text: "--archive \"$WORKSPACE/report/spectest\"\n--timer"
                                 sh 'make spectest'
