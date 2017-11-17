@@ -39,7 +39,7 @@ pipeline {
                             sh 'perl Configure.pl --prefix="$WORKSPACE/install" --with-moar="$WORKSPACE/install/bin/moar"'
                             sh 'make'
 
-                            withEnv(['PERL_TEST_HARNESS_DUMP_TAP' = "$WORKSPACE/report/nqp"']) {
+                            withEnv(['PERL_TEST_HARNESS_DUMP_TAP' = "$WORKSPACE/report/nqp"]) {
                                 writeFile file: ".proverc", text: "--formatter TAP::Formatter::JUnitREGRU\n--timer"
                                 sh 'make test'
                             }
@@ -52,7 +52,7 @@ pipeline {
                             sh 'perl Configure.pl --prefix="$WORKSPACE/install"'
                             sh 'make'
 
-                            withEnv(['PERL_TEST_HARNESS_DUMP_TAP' = "$WORKSPACE/report/rakudo"']) {
+                            withEnv(['PERL_TEST_HARNESS_DUMP_TAP' = "$WORKSPACE/report/rakudo"]) {
                                 writeFile file: ".proverc", text: "--formatter TAP::Formatter::JUnitREGRU\n--timer"
                                 sh 'make test'
                             }
