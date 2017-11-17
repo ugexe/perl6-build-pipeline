@@ -8,9 +8,9 @@ pipeline {
         timeout(time: 30, unit: 'MINUTES')
     }
     stages {
-        stage("all") {
+        stage("Distribute") {
             parallel {
-                stage("all on linux") {
+                stage("Build on Linux") {
                     agent {
                         label "linux"
                     }
@@ -23,7 +23,6 @@ pipeline {
                         sh 'mkdir -p $WORKSPACE/report/nqp'
                         sh 'mkdir -p $WORKSPACE/report/rakudo'
                         sh 'mkdir -p $WORKSPACE/report/spectest'
-                        sh 'cpanm --sudo -q -n TAP::Harness::Archive TAP::Formatter::JUnitREGRU'
 
                         dir('MoarVM') {
                             git url: 'https://github.com/MoarVM/MoarVM.git'
