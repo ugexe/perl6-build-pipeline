@@ -1,58 +1,66 @@
 pipeline {
     agent none
+    environment {
+        ALLOW_PASSING_TODOS = 1
+    }
     options {
         timestamps()
         timeout(time: 30, unit: 'MINUTES')
     }
     stages {
-        stage("distribute") {
-            steps {
-                parallel (
-                    "linux" : {
-                        node('linux') {
-                            sh 'mkdir -p $WORKSPACE/report/nqp'
-                            sh 'mkdir -p $WORKSPACE/report/rakudo'
-                            sh 'mkdir -p $WORKSPACE/report/spectest'
-                            sh 'cpanm --sudo -q -n TAP::Harness::Archive'
-
-                            dir('MoarVM') {
-                                git url: 'https://github.com/MoarVM/MoarVM.git'
-
-                                sh 'perl Configure.pl --prefix="$WORKSPACE/install"'
-                                sh 'make'
-
-                                sh 'make install'
-                            }
-                            dir('nqp') {
-                                git url: 'https://github.com/perl6/nqp.git'
-
-                                sh 'perl Configure.pl --prefix="$WORKSPACE/install" --with-moar="$WORKSPACE/install/bin/moar"'
-                                sh 'make'
-
-                                writeFile file: ".proverc", text: "--archive \"$WORKSPACE/report/nqp\"\n--timer"
-                                sh 'make test'
-                                step([$class: "TapPublisher", testResults: "report/nqp/**/*.t", failIfNoResults: true, outputTapToConsole: true, showOnlyFailures: true, skipIfBuildNotOk: false, todoIsFailure: false, verbose: true])
-
-                                sh 'make install'
-                            }
-                            dir('rakudo') {
-                                git url: 'https://github.com/rakudo/rakudo.git'
-
-                                sh 'perl Configure.pl --prefix="$WORKSPACE/install"'
-                                sh 'make'
-
-                                writeFile file: ".proverc", text: "--archive \"$WORKSPACE/report/rakudo\"\n--timer"
-                                sh 'make test'
-                                step([$class: "TapPublisher", testResults: "report/rakudo/**/*.t", failIfNoResults: true, outputTapToConsole: true, showOnlyFailures: true, skipIfBuildNotOk: false, todoIsFailure: false, verbose: true])
-
-                                writeFile file: ".proverc", text: "--archive \"$WORKSPACE/report/spectest\"\n--timer"
-                                sh 'make spectest'
-
-                                sh 'make install'
-                            }
+        stage("all") {
+            parallel {
+                stage("all on linux") {
+                    agent {
+                        label "linux"
+                    }
+                    post {
+                        always {
+                            junit "report/**/*.xml"
                         }
                     }
-                )
+                    steps {
+                        sh 'mkdir -p $WORKSPACE/report/nqp'
+                        sh 'mkdir -p $WORKSPACE/report/rakudo'
+                        sh 'mkdir -p $WORKSPACE/report/spectest'
+                        sh 'cpanm --sudo -q -n TAP::Harness::Archive TAP::Formatter::JUnitREGRU'
+
+                        dir('MoarVM') {
+                            git url: 'https://github.com/MoarVM/MoarVM.git'
+
+                            sh 'perl Configure.pl --prefix="$WORKSPACE/install"'
+                            sh 'make'
+
+                            sh 'make install'
+                        }
+                        dir('nqp') {
+                            git url: 'https://github.com/perl6/nqp.git'
+
+                            sh 'perl Configure.pl --prefix="$WORKSPACE/install" --with-moar="$WORKSPACE/install/bin/moar"'
+                            sh 'make'
+
+                            withEnv(['PERL_TEST_HARNESS_DUMP_TAP' = "$WORKSPACE/report/nqp"']) {
+                                writeFile file: ".proverc", text: "--formatter TAP::Formatter::JUnitREGRU\n--timer"
+                                sh 'make test'
+                            }
+
+                            sh 'make install'
+                        }
+                        dir('rakudo') {
+                            git url: 'https://github.com/rakudo/rakudo.git'
+
+                            sh 'perl Configure.pl --prefix="$WORKSPACE/install"'
+                            sh 'make'
+
+                            withEnv(['PERL_TEST_HARNESS_DUMP_TAP' = "$WORKSPACE/report/rakudo"']) {
+                                writeFile file: ".proverc", text: "--formatter TAP::Formatter::JUnitREGRU\n--timer"
+                                sh 'make test'
+                            }
+
+                            sh 'make install'
+                        }
+                    }
+                }
             }
         }
     }
