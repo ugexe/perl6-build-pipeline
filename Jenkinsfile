@@ -1,27 +1,3 @@
-#!/bin/groovy
-
-def shell(Map params = [:]) {
-    String script = params.script
-    Boolean returnStatus = params.get('returnStatus', false)
-    Boolean returnStdout = params.get('returnStdout', false)
-    String encoding = params.get('encoding', null)
-
-    if (isUnix()) {
-        return steps.sh(script: script,
-                  returnStatus: returnStatus,
-                  returnStdout: returnStdout,
-                      encoding: encoding)
-    } else {
-        return steps.powershell(script: script,
-                  returnStatus: returnStatus,
-                  returnStdout: returnStdout,
-                      encoding: encoding)    
-    }
-}
-def shell(String script) {
-    return shell(script: script)
-}
-
 pipeline {
     agent none
     options {
@@ -40,43 +16,127 @@ pipeline {
                                 }
                             }
 
-                            shell('mkdir -p $WORKSPACE/report/nqp')
-                            shell('mkdir -p $WORKSPACE/report/rakudo')
-                            shell('mkdir -p $WORKSPACE/report/spectest')
-                            shell('cpanm --sudo -q -n TAP::Harness::Archive')
+                            sh 'mkdir -p $WORKSPACE/report/nqp'
+                            sh 'mkdir -p $WORKSPACE/report/rakudo'
+                            sh 'mkdir -p $WORKSPACE/report/spectest'
+                            sh 'cpanm --sudo -q -n TAP::Harness::Archive'
 
                             dir('MoarVM') {
                                 git url: 'https://github.com/MoarVM/MoarVM.git'
 
-                                shell('perl Configure.pl --prefix="$WORKSPACE/install"')
-                                shell('make')
+                                sh 'perl Configure.pl --prefix="$WORKSPACE/install"'
+                                sh 'make'
 
-                                shell('make install')
+                                sh 'make install'
                             }
                             dir('nqp') {
                                 git url: 'https://github.com/perl6/nqp.git'
 
-                                shell('perl Configure.pl --prefix="$WORKSPACE/install" --with-moar="$WORKSPACE/install/bin/moar"')
-                                shell('make')
+                                sh 'perl Configure.pl --prefix="$WORKSPACE/install" --with-moar="$WORKSPACE/install/bin/moar"'
+                                sh 'make'
 
                                 writeFile file: ".proverc", text: "--archive \"$WORKSPACE/report/nqp\"\n--timer"
-                                shell('make test')
+                                sh 'make test'
 
-                                shell('make install')
+                                sh 'make install'
                             }
                             dir('rakudo') {
                                 git url: 'https://github.com/rakudo/rakudo.git'
 
-                                shell('perl Configure.pl --prefix="$WORKSPACE/install"')
-                                shell('make')
+                                sh 'perl Configure.pl --prefix="$WORKSPACE/install"'
+                                sh 'make'
 
                                 writeFile file: ".proverc", text: "--archive \"$WORKSPACE/report/rakudo\"\n--timer"
-                                shell('make test')
+                                sh 'make test'
 
                                 writeFile file: ".proverc", text: "--archive \"$WORKSPACE/report/spectest\"\n--timer"
-                                shell('make spectest')
+                                sh 'make spectest'
 
-                                shell('make install')
+                                sh 'make install'
+                            }
+                        }
+                    },
+                    "windows" : {
+                        node('windows') {
+                            post {
+                                always {
+                                    step([$class: "TapPublisher", testResults: "report/**/*", failIfNoResults: true, outputTapToConsole: true, showOnlyFailures: true, skipIfBuildNotOk: false, todoIsFailure: false, verbose: true])
+                                }
+                            }
+
+                            bat "mkdir \"$WORKSPACE\\report\\nqp\""
+                            bat "mkdir \"$WORKSPACE\\report\\rakudo\""
+                            bat "mkdir \"$WORKSPACE%\\report\\spectest\""
+                            bat 'cpanm -q -n TAP::Harness::Archive'
+
+                            dir('MoarVM') {
+                                git url: 'https://github.com/MoarVM/MoarVM.git'
+
+                                bat """
+                                    call \"C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat\"
+                                    perl Configure.pl --prefix=\"$WORKSPACE/install\"
+                                """
+                                bat """
+                                    call \"C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat\"
+                                    nmake
+                                """
+
+                                bat """
+                                    call \"C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat\"
+                                    nmake install
+                                """
+                            }
+                            dir('nqp') {
+                                git url: 'https://github.com/perl6/nqp.git'
+
+                                bat """
+                                    call \"C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat\"
+                                    perl Configure.pl --prefix=\"WORKSPACE/install\" --with-moar=\"$WORKSPACE/install/bin/moar\"
+                                """
+                                bat """
+                                    call \"C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat\"
+                                    nmake
+                                """
+
+                                writeFile file: "_proverc", text: "--archive \"$WORKSPACE/report/nqp\"\n--timer"
+                                bat """
+                                    call \"C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat\"
+                                    nmake test
+                                """
+
+                                bat """
+                                    call \"C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat\"
+                                    nmake install
+                                """
+                            }
+                            dir('rakudo') {
+                                git url: 'https://github.com/rakudo/rakudo.git'
+
+                                bat """
+                                    call \"C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat\"
+                                    perl Configure.pl --prefix=\"$WORKSPACE/install\"
+                                """
+                                bat """
+                                    call \"C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat\"
+                                    nmake
+                                """
+
+                                writeFile file: "_proverc", text: "--archive \"$WORKSPACE/report/rakudo\"\n--timer"
+                                bat """
+                                    call \"C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat\"
+                                    nmake test
+                                """
+
+                                writeFile file: "_proverc", text: "--archive \"$WORKSPACE/report/spectest\"\n--timer"
+                                bat """
+                                    call \"C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat\"
+                                    nmake spectest
+                                """
+
+                                bat """
+                                    call \"C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat\"
+                                    nmake install
+                                """
                             }
                         }
                     }
