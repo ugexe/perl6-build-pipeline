@@ -21,7 +21,6 @@ pipeline {
                         }
                     }
                     steps {
-                        stage 'Build moarvm'
                         dir('MoarVM') {
                             git url: 'https://github.com/MoarVM/MoarVM.git'
 
@@ -31,7 +30,6 @@ pipeline {
                             sh 'make install'
                         }
 
-                        stage 'Build nqp'
                         dir('nqp') {
                             git url: 'https://github.com/perl6/nqp.git'
 
@@ -47,7 +45,6 @@ pipeline {
                             sh 'make install'
                         }
 
-                        stage 'Build rakudo'
                         dir('rakudo') {
                             git url: 'https://github.com/rakudo/rakudo.git'
 
@@ -63,7 +60,6 @@ pipeline {
                             sh 'make install'
                         }
 
-                        stage 'Spectest rakudo'
                         dir('rakudo') {
                             withEnv(['PERL_TEST_HARNESS_DUMP_TAP=$TEST_DUMP_DIR/spectest', 'ALLOW_PASSING_TODOS=1']) {
                                 sh 'mkdir -p "$PERL_TEST_HARNESS_DUMP_TAP"'
