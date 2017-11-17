@@ -21,7 +21,6 @@ pipeline {
                         }
                     }
                     steps {
-                        sh 'mkdir -p $WORKSPACE/report/nqp'
                         sh 'mkdir -p $WORKSPACE/report/rakudo'
                         sh 'mkdir -p $WORKSPACE/report/spectest'
 
@@ -40,10 +39,12 @@ pipeline {
                             sh 'make'
 
                             withEnv(['PERL_TEST_HARNESS_DUMP_TAP=report/nqp', 'ALLOW_PASSING_TODOS=1']) {
-                                sh 'printenv'
-                                sh 'echo $ALLOW_PASSING_TODOS'
-                                sh 'echo $PERL_TEST_HARNESS_DUMP_TAP'
-                                writeFile file: ".proverc", text: "--archive $PERL_TEST_HARNESS_DUMP_TAP\n--formatter TAP::Formatter::JUnitREGRU"
+                                sh 'mkdir -p "$PERL_TEST_HARNESS_DUMP_TAP"'
+                                writeFile file: ".foo", text: "--archive \"$PERL_TEST_HARNESS_DUMP_TAP\"\n--formatter TAP::Formatter::JUnitREGRU"
+                                sh 'cat .foo'
+
+                                writeFile file: ".proverc", text: "--formatter TAP::Formatter::JUnitREGRU"
+                                sh 'cat .proverc'
                                 sh 'make test'
                             }
 
