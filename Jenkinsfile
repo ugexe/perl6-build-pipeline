@@ -11,10 +11,13 @@ pipeline {
                     agent {
                         label "linux"
                     }
+                    environment {
+                       ALLOW_PASSING_TODOS=1
+                    }
                     post {
                         always {
-                            sh 'dir'
-                            junit "report/**/*.xml"
+                            sh 'ls report -LR'
+                            junit "**/report/**/*.xml"
                         }
                     }
                     steps {
@@ -37,9 +40,10 @@ pipeline {
                             sh 'make'
 
                             withEnv(['PERL_TEST_HARNESS_DUMP_TAP=report/nqp', 'ALLOW_PASSING_TODOS=1']) {
-                                sh 'dir'
+                                sh 'printenv'
                                 sh 'echo $ALLOW_PASSING_TODOS'
-                                writeFile file: ".proverc", text: "--formatter TAP::Formatter::JUnitREGRU\n--timer"
+                                sh 'echo $PERL_TEST_HARNESS_DUMP_TAP'
+                                writeFile file: ".proverc", text: "--archive $PERL_TEST_HARNESS_DUMP_TAP\n--formatter TAP::Formatter::JUnitREGRU"
                                 sh 'make test'
                             }
 
