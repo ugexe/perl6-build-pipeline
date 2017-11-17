@@ -13,7 +13,7 @@ pipeline {
                     }
                     environment {
                        ALLOW_PASSING_TODOS=1
-                       TEST_DUMP_DIR=report
+                       TEST_DUMP_DIR="report"
                     }
                     post {
                         always {
