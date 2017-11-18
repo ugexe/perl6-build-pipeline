@@ -75,6 +75,7 @@ pipeline {
                                 timeout(time: 30, unit: 'MINUTES') {
                                     sh(returnStatus: true, script: '''
                                         mkdir -p "$PERL_TEST_HARNESS_DUMP_TAP"
+                                        rm S01-perl-5-integration/import.t
                                         perl fudgeall rakudo.moar **/*.t > test-list-spaces.txt
                                         perl -p -e \'s/\\s+/\\n/g\' test-list-spaces.txt > test-list.txt
                                         prove --formatter TAP::Formatter::JUnitREGRU --timer -r -j4 -e \"$INSTALL_DIR/bin/perl6 -I "$INSTALL_DIR/lib" -Ipackages \" - < test-list.txt
@@ -185,6 +186,7 @@ pipeline {
                                 timeout(time: 30, unit: 'MINUTES') {
                                     bat(returnStatus: true, script: '''
                                         mkdir "%PERL_TEST_HARNESS_DUMP_TAP%"
+                                        del S01-perl-5-integration/import.t
                                         perl fudgeall rakudo.moar **/*.t > test-list-spaces.txt
                                         perl -p -e "s/\\s+/\\n/g" test-list-spaces.txt > test-list.txt
                                         prove --formatter TAP::Formatter::JUnitREGRU" --timer -r -j4 -e "\"%INSTALL_DIR%\\bin\\perl6-m.bat\" -I \"%INSTALL_DIR%/lib\" -Ipackages " - < test-list.txt
