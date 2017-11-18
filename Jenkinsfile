@@ -80,7 +80,7 @@ pipeline {
                                     realtimeJUnit("**/*.xml") {
                                         sh(returnStatus: true, script: '''
                                             mkdir -p "$PERL_TEST_HARNESS_DUMP_TAP"
-                                            rm S01-perl-5-integration/import.t
+                                            rm -rf S01-perl-5-integration
                                             perl fudgeall rakudo.moar **/*.t > test-list-spaces.txt
                                             perl -p -e \'s/\\s+/\\n/g\' test-list-spaces.txt > test-list.txt
                                             prove --formatter TAP::Formatter::JUnitREGRU --timer -r -j4 -e \"$INSTALL_DIR/bin/perl6 -I "$INSTALL_DIR/lib" -Ipackages \" - < test-list.txt
@@ -197,7 +197,7 @@ pipeline {
                                     realtimeJUnit("**/*.xml") {
                                         bat(returnStatus: true, script: '''
                                             mkdir "%PERL_TEST_HARNESS_DUMP_TAP%"
-                                            del S01-perl-5-integration/import.t
+                                            del S01-perl-5-integration /Q /S
                                             perl fudgeall rakudo.moar **/*.t > test-list-spaces.txt
                                             perl -p -e "s/\\s+/\\n/g" test-list-spaces.txt > test-list.txt
                                             prove --formatter TAP::Formatter::JUnitREGRU" --timer -r -j4 -e "\"%INSTALL_DIR%\\bin\\perl6-m.bat\" -I \"%INSTALL_DIR%/lib\" -Ipackages " - < test-list.txt
