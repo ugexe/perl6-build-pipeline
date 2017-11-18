@@ -41,7 +41,7 @@ pipeline {
                                 timeout(time: 5, unit: 'MINUTES') {
                                     sh(returnStatus: true, script: '''
                                         mkdir -p "$PERL_TEST_HARNESS_DUMP_TAP"
-                                        prove --formatter TAP::Formatter::JUnitREGRU --timer -r -j4 -e ./nqp t/nqp t/moar t/hll t/qast t/qregex t/serialization
+                                        prove --formatter TAP::Formatter::JUnitREGRU --ignore-exit -r -j4 -e ./nqp t/nqp t/moar t/hll t/qast t/qregex t/serialization
                                     ''')
                                 }
                                 junit "**/*.xml"
@@ -60,7 +60,7 @@ pipeline {
                                 timeout(time: 20, unit: 'MINUTES') {
                                     sh(returnStatus: true, script: '''
                                         mkdir -p "$PERL_TEST_HARNESS_DUMP_TAP"
-                                        prove --formatter TAP::Formatter::JUnitREGRU --timer -r -j4 -e './perl6 -Ilib' t/
+                                        prove --formatter TAP::Formatter::JUnitREGRU --ignore-exit -r -j4 -e './perl6 -Ilib' t/
                                     ''')
                                 }
                                 junit "**/*.xml"
@@ -80,8 +80,7 @@ pipeline {
                                         rm -rf S01-perl-5-integration
                                         perl fudgeall rakudo.moar **/*.t > test-list-spaces.txt
                                         perl -p -e \'s/\\s+/\\n/g\' test-list-spaces.txt > test-list.txt
-                                        prove --formatter TAP::Formatter::JUnitREGRU --ext .moar --ignore-exit --timer -r -j4 -e \"$INSTALL_DIR/bin/perl6 -I "$INSTALL_DIR/lib" -Ipackages\" - < test-list.txt
-                                        prove --formatter TAP::Formatter::JUnitREGRU --timer -r -j4 -e \"$INSTALL_DIR/bin/perl6 -I "$INSTALL_DIR/lib" -Ipackages\" - < test-list.txt
+                                        prove --formatter TAP::Formatter::JUnitREGRU --ignore-exit -r -j4 -e \"$INSTALL_DIR/bin/perl6 -I "$INSTALL_DIR/lib" -Ipackages\" - < test-list.txt
                                     ''')
                                 }
                                 junit "**/*.xml"
@@ -142,7 +141,7 @@ pipeline {
                                     bat(returnStatus: true, script: '''
                                         mkdir "$PERL_TEST_HARNESS_DUMP_TAP"
                                         call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"
-                                        prove --formatter TAP::Formatter::JUnitREGRU --timer -r -j4 -e ".\\nqp" t/nqp t/moar t/hll t/qast t/qregex t/serialization
+                                        prove --formatter TAP::Formatter::JUnitREGRU --ignore-exit -r -j4 -e ".\\nqp" t/nqp t/moar t/hll t/qast t/qregex t/serialization
                                     ''')
                                 }
                                 junit "**/*.xml"
@@ -171,7 +170,7 @@ pipeline {
                                     bat(returnStatus: true, script: '''
                                         mkdir "%PERL_TEST_HARNESS_DUMP_TAP%"
                                         call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"
-                                        prove --formatter TAP::Formatter::JUnitREGRU --timer -r -j4 -e ".\\perl6 -Ilib" t/
+                                        prove --formatter TAP::Formatter::JUnitREGRU --ignore-exit -r -j4 -e ".\\perl6 -Ilib" t/
                                     ''')
                                 }
                                 junit "**/*.xml"
@@ -195,8 +194,7 @@ pipeline {
                                         del S01-perl-5-integration /Q /S
                                         perl fudgeall rakudo.moar "**/*.t" > test-list-spaces.txt
                                         perl -p -e "s/\\s+/\\n/g" test-list-spaces.txt > test-list.txt
-                                        prove --formatter TAP::Formatter::JUnitREGRU --ext .moar --ignore-exit --timer -r -j4 -e "\"%INSTALL_DIR%\\bin\\perl6-m.bat\" -I \"%INSTALL_DIR%/lib\" -Ipackages" - < test-list.txt
-                                        prove --formatter TAP::Formatter::JUnitREGRU --timer -r -j4 -e "\"%INSTALL_DIR%\\bin\\perl6-m.bat\" -I \"%INSTALL_DIR%/lib\" -Ipackages" - < test-list.txt
+                                        prove --formatter TAP::Formatter::JUnitREGRU --ignore-exit -r -j4 -e "\"%INSTALL_DIR%\\bin\\perl6-m.bat\" -I \"%INSTALL_DIR%/lib\" -Ipackages" - < test-list.txt
                                     ''')
                                 }
                                 junit "**/*.xml"
