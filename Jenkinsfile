@@ -68,7 +68,7 @@ pipeline {
                                 sh 'mkdir -p "$PERL_TEST_HARNESS_DUMP_TAP"'
 
                                 sh '''
-                                    perl fudgeall **/*.t > test-list-spaces.txt
+                                    perl fudgeall rakudo.moar **/*.t > test-list-spaces.txt
                                     perl -p -e 's/\\s+/\\n/g' test-list-spaces.txt > test-list.txt
                                     prove -e 'perl6' - < test-list.txt
                                 '''
