@@ -78,7 +78,7 @@ pipeline {
                                     sh(returnStatus: true, script: '''
                                         mkdir -p "$PERL_TEST_HARNESS_DUMP_TAP"
                                         rm -rf S01-perl-5-integration
-                                        perl fudgeall rakudo.moar "**/*.t" > test-list-spaces.txt
+                                        perl fudgeall rakudo.moar **/*.t > test-list-spaces.txt
                                         perl -p -e \'s/\\s+/\\n/g\' test-list-spaces.txt > test-list.txt
                                         prove --formatter TAP::Formatter::JUnitREGRU --ext .moar --ignore-exit --timer -r -j4 -e \"$INSTALL_DIR/bin/perl6 -I "$INSTALL_DIR/lib" -Ipackages\" - < test-list.txt
                                         prove --formatter TAP::Formatter::JUnitREGRU --timer -r -j4 -e \"$INSTALL_DIR/bin/perl6 -I "$INSTALL_DIR/lib" -Ipackages\" - < test-list.txt
@@ -188,9 +188,9 @@ pipeline {
                             git url: 'https://github.com/perl6/roast.git'
 
                             withEnv(['PATH+=%INSTALL_DIR%\\bin','PERL_TEST_HARNESS_DUMP_TAP=$TEST_DUMP_DIR/spectest', 'ALLOW_PASSING_TODOS=1']) {
-                                sh 'printenv'
                                 timeout(time: 30, unit: 'MINUTES') {
                                     bat(returnStatus: true, script: '''
+                                        set
                                         mkdir "%PERL_TEST_HARNESS_DUMP_TAP%"
                                         del S01-perl-5-integration /Q /S
                                         perl fudgeall rakudo.moar "**/*.t" > test-list-spaces.txt
