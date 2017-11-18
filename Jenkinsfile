@@ -71,7 +71,7 @@ pipeline {
                                 writeFile file: ".proverc", text: "--formatter TAP::Formatter::JUnitREGRU"
                                 sh '''
                                     perl fudgeall rakudo.moar **/*.t > test-list-spaces.txt
-                                    perl -p -e \'s/\s+/\n/g\' test-list-spaces.txt > test-list.txt
+                                    perl -p -e \'s/\\s+/\\n/g\' test-list-spaces.txt > test-list.txt
                                     prove -e \'$INSTALL_DIR/bin/perl6 -I "$INSTALL_DIR/lib"\' - < test-list.txt
                                 '''
                             }
