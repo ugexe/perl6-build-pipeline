@@ -38,7 +38,7 @@ pipeline {
                             sh 'make'
 
                             withEnv(['PERL_TEST_HARNESS_DUMP_TAP=$TEST_DUMP_DIR/nqp']) {
-                                timeout(time: 10, unit: 'MINUTES') {
+                                timeout(time: 5, unit: 'MINUTES') {
                                     sh(returnStatus: true, script: '''
                                         mkdir -p "$PERL_TEST_HARNESS_DUMP_TAP"
                                         prove --formatter TAP::Formatter::JUnitREGRU --timer -r -j4 -e ./nqp t/nqp t/moar t/hll t/qast t/qregex t/serialization
@@ -56,7 +56,7 @@ pipeline {
                             sh 'make'
 
                             withEnv(['PERL_TEST_HARNESS_DUMP_TAP=$TEST_DUMP_DIR/rakudo']) {
-                                timeout(time: 10, unit: 'MINUTES') {
+                                timeout(time: 20, unit: 'MINUTES') {
                                     sh(returnStatus: true, script: '''
                                         mkdir -p "$PERL_TEST_HARNESS_DUMP_TAP"
                                         prove --formatter TAP::Formatter::JUnitREGRU --timer -r -j4 -e './perl6 -Ilib' t/
@@ -70,14 +70,14 @@ pipeline {
                         dir('spectest') {
                             git url: 'https://github.com/perl6/roast.git'
 
-                            withEnv(['PATH+=$INSTALL_DIR/bin','PERL_TEST_HARNESS_DUMP_TAP=$TEST_DUMP_DIR/spectest']) {
+                            withEnv([PATH+=$INSTALL_DIR/bin','PERL_TEST_HARNESS_DUMP_TAP=$TEST_DUMP_DIR/spectest']) {
                                 sh 'printenv'
-                                timeout(time: 20, unit: 'MINUTES') {
+                                timeout(time: 30, unit: 'MINUTES') {
                                     sh(returnStatus: true, script: '''
                                         mkdir -p "$PERL_TEST_HARNESS_DUMP_TAP"
                                         perl fudgeall rakudo.moar **/*.t > test-list-spaces.txt
                                         perl -p -e \'s/\\s+/\\n/g\' test-list-spaces.txt > test-list.txt
-                                        prove --formatter TAP::Formatter::JUnitREGRU --timer -r -j4 -e \"$INSTALL_DIR/bin/perl6 -I "$INSTALL_DIR/lib"\" - < test-list.txt
+                                        prove --formatter TAP::Formatter::JUnitREGRU --timer -r -j4 -e \"$INSTALL_DIR/bin/perl6 -I "$INSTALL_DIR/lib" -Ipackages \" - < test-list.txt
                                     ''')
                                 }
                             }
@@ -133,7 +133,7 @@ pipeline {
                             '''
 
                             withEnv(['PERL_TEST_HARNESS_DUMP_TAP=$TEST_DUMP_DIR/nqp']) {
-                                timeout(time: 10, unit: 'MINUTES') {
+                                timeout(time: 5, unit: 'MINUTES') {
                                     bat(returnStatus: true, script: '''
                                         mkdir "$PERL_TEST_HARNESS_DUMP_TAP"
                                         call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"
@@ -182,12 +182,12 @@ pipeline {
                             git url: 'https://github.com/perl6/roast.git'
 
                             withEnv(['PATH+=$INSTALL_DIR/bin','PERL_TEST_HARNESS_DUMP_TAP=$TEST_DUMP_DIR/spectest', 'ALLOW_PASSING_TODOS=1']) {
-                                timeout(time: 20, unit: 'MINUTES') {
+                                timeout(time: 30, unit: 'MINUTES') {
                                     bat(returnStatus: true, script: '''
                                         mkdir "%PERL_TEST_HARNESS_DUMP_TAP%"
                                         perl fudgeall rakudo.moar **/*.t > test-list-spaces.txt
                                         perl -p -e "s/\\s+/\\n/g" test-list-spaces.txt > test-list.txt
-                                        prove --formatter TAP::Formatter::JUnitREGRU" --timer -r -j4 -e "\"%INSTALL_DIR%\\bin\\perl6-m.bat\" -I \"%INSTALL_DIR%/lib\"" - < test-list.txt
+                                        prove --formatter TAP::Formatter::JUnitREGRU" --timer -r -j4 -e "\"%INSTALL_DIR%\\bin\\perl6-m.bat\" -I \"%INSTALL_DIR%/lib\" -Ipackages " - < test-list.txt
                                     ''')
                                 }
                             }
