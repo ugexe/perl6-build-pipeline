@@ -5,7 +5,7 @@ pipeline {
         timeout(time: 60, unit: 'MINUTES')
     }
     stages {
-        stage("Distribute") {
+        stage("Build") {
             parallel {
                 stage("Build on Linux") {
                     agent {
@@ -37,10 +37,9 @@ pipeline {
                             sh 'perl Configure.pl --prefix="$INSTALL_DIR" --with-moar="$INSTALL_DIR/bin/moar"'
                             sh 'make'
 
-                            withEnv(['PERL_TEST_HARNESS_DUMP_TAP=$TEST_DUMP_DIR/nqp', 'ALLOW_PASSING_TODOS=1']) {
+                            withEnv(['PERL_TEST_HARNESS_DUMP_TAP=$TEST_DUMP_DIR/nqp']) {
                                 sh 'mkdir -p "$PERL_TEST_HARNESS_DUMP_TAP"'
-                                writeFile file: ".proverc", text: "--formatter TAP::Formatter::JUnitREGRU"
-                                sh 'make test'
+                                prove --formatter TAP::Formatter::JUnitREGRU --timer -r -e '' t/0**/*.t
                             }
 
                             sh 'make install'
@@ -52,10 +51,9 @@ pipeline {
                             sh 'perl Configure.pl --prefix="$INSTALL_DIR"'
                             sh 'make'
 
-                            withEnv(['PERL_TEST_HARNESS_DUMP_TAP=$TEST_DUMP_DIR/rakudo', 'ALLOW_PASSING_TODOS=1']) {
+                            withEnv(['PERL_TEST_HARNESS_DUMP_TAP=$TEST_DUMP_DIR/rakudo']) {
                                 sh 'mkdir -p "$PERL_TEST_HARNESS_DUMP_TAP"'
-                                writeFile file: ".proverc", text: "--formatter TAP::Formatter::JUnitREGRU"
-                                sh 'make test'
+                                prove --formatter TAP::Formatter::JUnitREGRU --timer -r -e '' t/S**/*.t
                             }
 
                             sh 'make install'
@@ -64,15 +62,14 @@ pipeline {
                         dir('spectest') {
                             git url: 'https://github.com/perl6/roast.git'
 
-                            withEnv(['PATH+=$INSTALL_DIR/bin','PERL_TEST_HARNESS_DUMP_TAP=$TEST_DUMP_DIR/spectest', 'ALLOW_PASSING_TODOS=1']) {
+                            withEnv(['PATH+=$INSTALL_DIR/bin','PERL_TEST_HARNESS_DUMP_TAP=$TEST_DUMP_DIR/spectest']) {
                                 sh 'mkdir -p "$PERL_TEST_HARNESS_DUMP_TAP"'
 
                                 sh 'printenv'
-                                writeFile file: ".proverc", text: "--formatter TAP::Formatter::JUnitREGRU"
                                 sh '''
                                     perl fudgeall rakudo.moar **/*.t > test-list-spaces.txt
                                     perl -p -e \'s/\\s+/\\n/g\' test-list-spaces.txt > test-list.txt
-                                    prove -e \'$INSTALL_DIR/bin/perl6 -I "$INSTALL_DIR/lib"\' - < test-list.txt
+                                    prove --formatter TAP::Formatter::JUnitREGRU --timer -r -e \'$INSTALL_DIR/bin/perl6 -I "$INSTALL_DIR/lib"\' - < test-list.txt
                                 '''
                             }
                         }
@@ -86,7 +83,7 @@ pipeline {
                     environment {
                        ALLOW_PASSING_TODOS=1
                        TEST_DUMP_DIR="report"
-                       INSTALL_DIR="$WORKSPACE/install"
+                       INSTALL_DIR=$WORKSPACE/install"
                     }
                     post {
                         always {
@@ -99,7 +96,7 @@ pipeline {
 
                             bat '''
                                 call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"
-                                perl Configure.pl --prefix="$INSTALL_DIR"
+                                perl Configure.pl --prefix="%INSTALL_DIR%"
                             '''
                             bat '''
                                 call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"
@@ -117,14 +114,14 @@ pipeline {
 
                             bat '''
                                 call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"
-                                perl Configure.pl --prefix="$INSTALL_DIR" --with-moar="$INSTALL_DIR\\bin\\moar"
+                                perl Configure.pl --prefix="%INSTALL_DIR%" --with-moar="%INSTALL_DIR%\\bin\\moar"
                             '''
                             bat '''
                                 call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"
                                 nmake
                             '''
 
-                            withEnv(['PERL_TEST_HARNESS_DUMP_TAP=$TEST_DUMP_DIR/nqp', 'ALLOW_PASSING_TODOS=1']) {
+                            withEnv(['PERL_TEST_HARNESS_DUMP_TAP=$TEST_DUMP_DIR/nqp']) {
                                 bat 'mkdir "$PERL_TEST_HARNESS_DUMP_TAP"'
 
                                 writeFile file: "_proverc", text: "--formatter TAP::Formatter::JUnitREGRU"
@@ -145,15 +142,15 @@ pipeline {
 
                             bat '''
                                 call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"
-                                perl Configure.pl --prefix="$INSTALL_DIR"
+                                perl Configure.pl --prefix="%INSTALL_DIR%"
                             '''
                             bat '''
                                 call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"
                                 nmake
                             '''
 
-                            withEnv(['PERL_TEST_HARNESS_DUMP_TAP=$TEST_DUMP_DIR/rakudo', 'ALLOW_PASSING_TODOS=1']) {
-                                bat 'mkdir "$PERL_TEST_HARNESS_DUMP_TAP"'
+                            withEnv(['PERL_TEST_HARNESS_DUMP_TAP=$TEST_DUMP_DIR/rakudo']) {
+                                bat 'mkdir "%PERL_TEST_HARNESS_DUMP_TAP%"'
 
                                 writeFile file: "_proverc", text: "--formatter TAP::Formatter::JUnitREGRU"
                                 bat '''
@@ -179,7 +176,8 @@ pipeline {
                                 bat '''
                                     perl fudgeall rakudo.moar **/*.t > test-list-spaces.txt
                                     perl -p -e "s/\\s+/\\n/g" test-list-spaces.txt > test-list.txt
-                                    prove -e "\"$INSTALL_DIR\\bin\\perl6-m.bat\" -I \"$INSTALL_DIR/lib\"" - < test-list.txt
+                                    set PERL6-
+                                    prove -e "\"%INSTALL_DIR%\\bin\\perl6-m.bat\" -I \"%INSTALL_DIR%/lib\"" - < test-list.txt
                                 '''
                             }
                         }
