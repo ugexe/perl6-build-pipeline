@@ -86,7 +86,7 @@ pipeline {
                     environment {
                        ALLOW_PASSING_TODOS=1
                        TEST_DUMP_DIR="report"
-                       INSTALL_DIR=$WORKSPACE/install"
+                       INSTALL_DIR="$WORKSPACE/install"
                     }
                     post {
                         always {
