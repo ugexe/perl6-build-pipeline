@@ -71,8 +71,8 @@ pipeline {
                                 writeFile file: ".proverc", text: "--formatter TAP::Formatter::JUnitREGRU"
                                 sh '''
                                     perl fudgeall rakudo.moar **/*.t > test-list-spaces.txt
-                                    perl -p -e 's/\\s+/\\n/g' test-list-spaces.txt > test-list.txt
-                                    prove -e '$INSTALL_DIR/bin/perl6 -I "$INSTALL_DIR/lib"' - < test-list.txt
+                                    perl -p -e \'s/\s+/\n/g\' test-list-spaces.txt > test-list.txt
+                                    prove -e \'$INSTALL_DIR/bin/perl6 -I "$INSTALL_DIR/lib"\' - < test-list.txt
                                 '''
                             }
                         }
@@ -117,7 +117,7 @@ pipeline {
 
                             bat '''
                                 call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"
-                                perl Configure.pl --prefix="$INSTALL_DIR" --with-moar="$INSTALL_DIR/bin/moar"
+                                perl Configure.pl --prefix="$INSTALL_DIR" --with-moar="$INSTALL_DIR\\bin\\moar"
                             '''
                             bat '''
                                 call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"
