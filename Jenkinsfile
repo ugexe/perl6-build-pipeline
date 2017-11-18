@@ -40,7 +40,7 @@ pipeline {
                             withEnv(['PERL_TEST_HARNESS_DUMP_TAP=$TEST_DUMP_DIR/nqp']) {
                                 sh '''
                                     mkdir -p "$PERL_TEST_HARNESS_DUMP_TAP"
-                                    prove --formatter TAP::Formatter::JUnitREGRU --timer -r -e \'./nqp --module-path=.\' t/nqp t/moar t/concurrency t/hll t/qast t/qregex t/serialization
+                                    prove --formatter TAP::Formatter::JUnitREGRU --timer -r -j4 -e ./nqp t/nqp t/moar t/hll t/qast t/qregex t/serialization
                                 '''
                             }
 
@@ -56,7 +56,7 @@ pipeline {
                             withEnv(['PERL_TEST_HARNESS_DUMP_TAP=$TEST_DUMP_DIR/rakudo']) {
                                 sh '''
                                     mkdir -p "$PERL_TEST_HARNESS_DUMP_TAP"
-                                    prove --formatter TAP::Formatter::JUnitREGRU --timer -r -e './perl6 -Ilib' t/
+                                    prove --formatter TAP::Formatter::JUnitREGRU --timer -r -j4 -e './perl6 -Ilib' t/
                                 '''
                             }
 
@@ -130,7 +130,7 @@ pipeline {
                                 bat '''
                                     mkdir "$PERL_TEST_HARNESS_DUMP_TAP"
                                     call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"
-                                    prove --formatter TAP::Formatter::JUnitREGRU --timer -r -e ".\\nqp" t/nqp t/moar t/concurrency t/hll t/qast t/qregex t/serializatio
+                                    prove --formatter TAP::Formatter::JUnitREGRU --timer -r -e ".\\nqp" t/nqp t/moar t/hll t/qast t/qregex t/serialization
                                 '''
                             }
 
