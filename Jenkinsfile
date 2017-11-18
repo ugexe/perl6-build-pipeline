@@ -78,7 +78,7 @@ pipeline {
                                     sh(returnStatus: true, script: '''
                                         mkdir -p "$PERL_TEST_HARNESS_DUMP_TAP"
                                         rm -rf S01-perl-5-integration
-                                        perl fudgeall rakudo.moar **/*.t > test-list-spaces.txt
+                                        perl fudgeall rakudo.moar "**/*.t" > test-list-spaces.txt
                                         perl -p -e \'s/\\s+/\\n/g\' test-list-spaces.txt > test-list.txt
                                         prove --formatter TAP::Formatter::JUnitREGRU --timer -v -r -j4 -e "perl6 -Ipackages" - < test-list.txt
                                     ''')
@@ -192,7 +192,7 @@ pipeline {
                                     bat(returnStatus: true, script: '''
                                         mkdir "%PERL_TEST_HARNESS_DUMP_TAP%"
                                         del S01-perl-5-integration /Q /S
-                                        perl fudgeall rakudo.moar **/*.t > test-list-spaces.txt
+                                        perl fudgeall rakudo.moar "**/*.t" > test-list-spaces.txt
                                         perl -p -e "s/\\s+/\\n/g" test-list-spaces.txt > test-list.txt
                                         call "vcvars64.bat"
                                         prove --formatter TAP::Formatter::JUnitREGRU" --timer -v -r -j4 -e "perl6.bat -Ipackages" - < test-list.txt
