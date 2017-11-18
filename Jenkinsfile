@@ -67,11 +67,11 @@ pipeline {
                             withEnv(['PATH+=$INSTALL_DIR/bin','PERL_TEST_HARNESS_DUMP_TAP=$TEST_DUMP_DIR/spectest', 'ALLOW_PASSING_TODOS=1']) {
                                 sh 'mkdir -p "$PERL_TEST_HARNESS_DUMP_TAP"'
 
-                                sh """
+                                sh '''
                                     perl fudgeall **/*.t > test-list-spaces.txt
-                                    perl -p -e 's/\s+/\n/g' test-list-spaces.txt > test-list.txt
+                                    perl -p -e 's/\\s+/\\n/g' test-list-spaces.txt > test-list.txt
                                     prove -e 'perl6' - < test-list.txt
-                                """
+                                '''
                                 writeFile file: ".proverc", text: "--formatter TAP::Formatter::JUnitREGRU"
                                 sh 'prove -e "perl6 -I \"$INSTALL_DIR/lib\""'
                                 sh 'make spectest'
