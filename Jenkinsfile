@@ -72,7 +72,7 @@ pipeline {
                         dir('spectest') {
                             git url: 'https://github.com/perl6/roast.git'
 
-                            withEnv(["PATH+=$INSTALL_DIR/bin",'PERL_TEST_HARNESS_DUMP_TAP=$TEST_DUMP_DIR/spectest']) {
+                            withEnv(['PATH=$INSTALL_DIR/bin:$PATH','PERL_TEST_HARNESS_DUMP_TAP=$TEST_DUMP_DIR/spectest']) {
                                 sh 'printenv'
                                 timeout(time: 30, unit: 'MINUTES') {
                                     sh(returnStatus: true, script: '''
@@ -187,7 +187,7 @@ pipeline {
                         dir('spectest') {
                             git url: 'https://github.com/perl6/roast.git'
 
-                            withEnv(["PATH+=$INSTALL_DIR/bin",'PERL_TEST_HARNESS_DUMP_TAP=$TEST_DUMP_DIR/spectest', 'ALLOW_PASSING_TODOS=1']) {
+                            withEnv([PATH=$INSTALL_DIR/bin;$PATH','PERL_TEST_HARNESS_DUMP_TAP=$TEST_DUMP_DIR/spectest', 'ALLOW_PASSING_TODOS=1']) {
                                 timeout(time: 30, unit: 'MINUTES') {
                                     bat(returnStatus: true, script: '''
                                         mkdir "%PERL_TEST_HARNESS_DUMP_TAP%"
