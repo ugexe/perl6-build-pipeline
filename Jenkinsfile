@@ -97,7 +97,7 @@ pipeline {
                        ALLOW_PASSING_TODOS=1
                        TEST_DUMP_DIR="report"
                        INSTALL_DIR="$WORKSPACE/install"
-                       PATH+VSENV="C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\"
+                       PATH="C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\:$PATH"
                     }
                     post {
                         always {
