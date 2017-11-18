@@ -94,6 +94,8 @@ pipeline {
                         }
                     }
                     steps {
+                        bat 'cpanm -v -n TAP::Formatter::JUnitREGRU'
+
                         dir('MoarVM') {
                             git url: 'https://github.com/MoarVM/MoarVM.git'
 
