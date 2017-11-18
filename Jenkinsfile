@@ -39,10 +39,12 @@ pipeline {
 
                             withEnv(['PERL_TEST_HARNESS_DUMP_TAP=$TEST_DUMP_DIR/nqp']) {
                                 timeout(time: 5, unit: 'MINUTES') {
-                                    sh(returnStatus: true, script: '''
-                                        mkdir -p "$PERL_TEST_HARNESS_DUMP_TAP"
-                                        prove --formatter TAP::Formatter::JUnitREGRU --timer -r -j4 -e ./nqp t/nqp t/moar t/hll t/qast t/qregex t/serialization
-                                    ''')
+                                    realtimeJUnit("**/*.xml") {
+                                        sh(returnStatus: true, script: '''
+                                            mkdir -p "$PERL_TEST_HARNESS_DUMP_TAP"
+                                            prove --formatter TAP::Formatter::JUnitREGRU --timer -r -j4 -e ./nqp t/nqp t/moar t/hll t/qast t/qregex t/serialization
+                                        ''')
+                                    }
                                 }
                             }
 
@@ -57,10 +59,12 @@ pipeline {
 
                             withEnv(['PERL_TEST_HARNESS_DUMP_TAP=$TEST_DUMP_DIR/rakudo']) {
                                 timeout(time: 20, unit: 'MINUTES') {
-                                    sh(returnStatus: true, script: '''
-                                        mkdir -p "$PERL_TEST_HARNESS_DUMP_TAP"
-                                        prove --formatter TAP::Formatter::JUnitREGRU --timer -r -j4 -e './perl6 -Ilib' t/
-                                    ''')
+                                    realtimeJUnit("**/*.xml") {
+                                        sh(returnStatus: true, script: '''
+                                            mkdir -p "$PERL_TEST_HARNESS_DUMP_TAP"
+                                            prove --formatter TAP::Formatter::JUnitREGRU --timer -r -j4 -e './perl6 -Ilib' t/
+                                        ''')
+                                    }
                                 }
                             }
 
@@ -73,13 +77,15 @@ pipeline {
                             withEnv(['PATH+=$INSTALL_DIR/bin','PERL_TEST_HARNESS_DUMP_TAP=$TEST_DUMP_DIR/spectest']) {
                                 sh 'printenv'
                                 timeout(time: 30, unit: 'MINUTES') {
-                                    sh(returnStatus: true, script: '''
-                                        mkdir -p "$PERL_TEST_HARNESS_DUMP_TAP"
-                                        rm S01-perl-5-integration/import.t
-                                        perl fudgeall rakudo.moar **/*.t > test-list-spaces.txt
-                                        perl -p -e \'s/\\s+/\\n/g\' test-list-spaces.txt > test-list.txt
-                                        prove --formatter TAP::Formatter::JUnitREGRU --timer -r -j4 -e \"$INSTALL_DIR/bin/perl6 -I "$INSTALL_DIR/lib" -Ipackages \" - < test-list.txt
-                                    ''')
+                                    realtimeJUnit("**/*.xml") {
+                                        sh(returnStatus: true, script: '''
+                                            mkdir -p "$PERL_TEST_HARNESS_DUMP_TAP"
+                                            rm S01-perl-5-integration/import.t
+                                            perl fudgeall rakudo.moar **/*.t > test-list-spaces.txt
+                                            perl -p -e \'s/\\s+/\\n/g\' test-list-spaces.txt > test-list.txt
+                                            prove --formatter TAP::Formatter::JUnitREGRU --timer -r -j4 -e \"$INSTALL_DIR/bin/perl6 -I "$INSTALL_DIR/lib" -Ipackages \" - < test-list.txt
+                                        ''')
+                                    }
                                 }
                             }
                         }
@@ -135,11 +141,13 @@ pipeline {
 
                             withEnv(['PERL_TEST_HARNESS_DUMP_TAP=$TEST_DUMP_DIR/nqp']) {
                                 timeout(time: 5, unit: 'MINUTES') {
-                                    bat(returnStatus: true, script: '''
-                                        mkdir "$PERL_TEST_HARNESS_DUMP_TAP"
-                                        call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"
-                                        prove --formatter TAP::Formatter::JUnitREGRU --timer -r -j4 -e ".\\nqp" t/nqp t/moar t/hll t/qast t/qregex t/serialization
-                                    ''')
+                                    realtimeJUnit("**/*.xml") {
+                                        bat(returnStatus: true, script: '''
+                                            mkdir "$PERL_TEST_HARNESS_DUMP_TAP"
+                                            call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"
+                                            prove --formatter TAP::Formatter::JUnitREGRU --timer -r -j4 -e ".\\nqp" t/nqp t/moar t/hll t/qast t/qregex t/serialization
+                                        ''')
+                                    }
                                 }
                             }
 
@@ -163,12 +171,14 @@ pipeline {
 
                             withEnv(['PERL_TEST_HARNESS_DUMP_TAP=$TEST_DUMP_DIR/rakudo']) {
                                 timeout(time: 10, unit: 'MINUTES') {
-                                    bat(returnStatus: true, script: '''
-                                        mkdir "%PERL_TEST_HARNESS_DUMP_TAP%"
-                                        call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"
-                                        prove --formatter TAP::Formatter::JUnitREGRU --timer -r -j4 -e ".\\perl6 -Ilib" t/
-                                        nmake test
-                                    ''')
+                                    realtimeJUnit("**/*.xml") {
+                                        bat(returnStatus: true, script: '''
+                                            mkdir "%PERL_TEST_HARNESS_DUMP_TAP%"
+                                            call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"
+                                            prove --formatter TAP::Formatter::JUnitREGRU --timer -r -j4 -e ".\\perl6 -Ilib" t/
+                                            nmake test
+                                        ''')
+                                    }
                                 }
                             }
 
@@ -184,13 +194,15 @@ pipeline {
 
                             withEnv(['PATH+=$INSTALL_DIR/bin','PERL_TEST_HARNESS_DUMP_TAP=$TEST_DUMP_DIR/spectest', 'ALLOW_PASSING_TODOS=1']) {
                                 timeout(time: 30, unit: 'MINUTES') {
-                                    bat(returnStatus: true, script: '''
-                                        mkdir "%PERL_TEST_HARNESS_DUMP_TAP%"
-                                        del S01-perl-5-integration/import.t
-                                        perl fudgeall rakudo.moar **/*.t > test-list-spaces.txt
-                                        perl -p -e "s/\\s+/\\n/g" test-list-spaces.txt > test-list.txt
-                                        prove --formatter TAP::Formatter::JUnitREGRU" --timer -r -j4 -e "\"%INSTALL_DIR%\\bin\\perl6-m.bat\" -I \"%INSTALL_DIR%/lib\" -Ipackages " - < test-list.txt
-                                    ''')
+                                    realtimeJUnit("**/*.xml") {
+                                        bat(returnStatus: true, script: '''
+                                            mkdir "%PERL_TEST_HARNESS_DUMP_TAP%"
+                                            del S01-perl-5-integration/import.t
+                                            perl fudgeall rakudo.moar **/*.t > test-list-spaces.txt
+                                            perl -p -e "s/\\s+/\\n/g" test-list-spaces.txt > test-list.txt
+                                            prove --formatter TAP::Formatter::JUnitREGRU" --timer -r -j4 -e "\"%INSTALL_DIR%\\bin\\perl6-m.bat\" -I \"%INSTALL_DIR%/lib\" -Ipackages " - < test-list.txt
+                                        ''')
+                                    }
                                 }
                             }
                         }
