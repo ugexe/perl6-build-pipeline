@@ -70,7 +70,7 @@ pipeline {
                         dir('spectest') {
                             git url: 'https://github.com/perl6/roast.git'
 
-                            withEnv([PATH+=$INSTALL_DIR/bin','PERL_TEST_HARNESS_DUMP_TAP=$TEST_DUMP_DIR/spectest']) {
+                            withEnv(['PATH+=$INSTALL_DIR/bin','PERL_TEST_HARNESS_DUMP_TAP=$TEST_DUMP_DIR/spectest']) {
                                 sh 'printenv'
                                 timeout(time: 30, unit: 'MINUTES') {
                                     sh(returnStatus: true, script: '''
