@@ -80,7 +80,7 @@ pipeline {
                                         rm -rf S01-perl-5-integration
                                         perl fudgeall rakudo.moar **/*.t > test-list-spaces.txt
                                         perl -p -e \'s/\\s+/\\n/g\' test-list-spaces.txt > test-list.txt
-                                        prove --formatter TAP::Formatter::JUnitREGRU -r -j4 -e \'$INSTALL_DIR/bin/perl6 -Ipackages\' - < test-list.txt
+                                        prove --formatter TAP::Formatter::JUnitREGRU --ignore-exit -r -j4 -e \'$INSTALL_DIR/bin/perl6\' - < test-list.txt
                                     ''')
                                 }
                                 junit "**/*.xml"
@@ -194,7 +194,7 @@ pipeline {
                                         del S01-perl-5-integration /Q /S
                                         perl fudgeall rakudo.moar "**/*.t" > test-list-spaces.txt
                                         perl -p -e "s/\\s+/\\n/g" test-list-spaces.txt > test-list.txt
-                                        prove --formatter TAP::Formatter::JUnitREGRU -r -j4 -e "\"%INSTALL_DIR%\\bin\\perl6-m.bat\" -Ipackages" - < test-list.txt
+                                        prove --formatter TAP::Formatter::JUnitREGRU --ignore-exit -r -j4 -e "%INSTALL_DIR%\\bin\\perl6-m.bat" - < test-list.txt
                                     ''')
                                 }
                                 junit "**/*.xml"
